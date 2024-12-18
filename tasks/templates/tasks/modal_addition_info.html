@@ -1,0 +1,36 @@
+<div id="task-modal" class="w-full z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 hidden">
+    <div class="w-[90%] sm:w-[80%] md:w-[60%] max-h-[90vh] overflow-y-auto border rounded-lg bg-white p-6">
+        <h2 id="modal-task-title" class="text-2xl font-semibold text-gray-800 break-words"></h2>  
+        <p id="modal-task-descriptions" class="mt-4 text-gray-600"></p>
+        <p id="modal-task-status" class="mt-4 text-sm font-medium"></p>
+        <button id="close-modal" class="mt-6 px-4 py-2 text-white bg-gray-700 rounded-lg hover:bg-gray-800">Закрыть</button>
+    </div>
+  </div>
+  
+<script>
+  // Открытие модального окна при клике на карточку
+  document.querySelectorAll('.task-card').forEach(card => {
+      card.addEventListener('click', function() {
+          const taskId = this.getAttribute('data-task-id');
+
+          // Отправляем запрос на сервер для получения данных о задаче
+          fetch(`/tasks/task_detail/${taskId}/`)
+              .then(response => response.json())
+              .then(data => {
+                  // Заполняем модальное окно данными
+                  document.getElementById('modal-task-title').textContent = data.title;
+                  document.getElementById('modal-task-descriptions').textContent = `Описание: ${data.descriptions}`;
+                  document.getElementById('modal-task-status').textContent = `Статус: ${data.status}`;
+
+                  // Показываем модальное окно
+                  document.getElementById('task-modal').classList.remove('hidden');
+              })
+              .catch(error => console.error('Ошибка при получении данных:', error));
+      });
+  });
+
+  // Закрытие модального окна
+  document.getElementById('close-modal').addEventListener('click', function() {
+      document.getElementById('task-modal').classList.add('hidden');
+  });
+</script>
